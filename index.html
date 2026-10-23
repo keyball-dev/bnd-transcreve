@@ -23,7 +23,7 @@ textarea{width:100%;min-height:160px;font:inherit;font-size:16px;padding:10px;bo
 <div class="card">
  <button class="pri" id="pick">🎙️ Escolher áudio</button><input type="file" id="file" accept="audio/*,video/mp4,.opus,.ogg,.oga,.m4a,.mp3,.wav,.aac" class="hidden">
  <p class="muted">Ou no WhatsApp: segure o áudio › Compartilhar › <b>Transcreve</b>. No computador, arraste o arquivo pra cá.</p>
- <label for="model">Modelo</label><select id="model"><option value="onnx-community/whisper-base">Rápido (padrão)</option><option value="onnx-community/whisper-small">Mais preciso (mais lento)</option></select>
+ <label for="model">Modelo</label><select id="model"><option value="onnx-community/whisper-small">Mais preciso (padrão)</option><option value="onnx-community/whisper-base">Rápido</option></select>
  <div id="prog" class="hidden"><div class="muted" id="st"></div><div class="bar"><i id="pb"></i></div></div>
 </div>
 <div class="card hidden" id="res">
@@ -49,6 +49,6 @@ textarea{width:100%;min-height:160px;font:inherit;font-size:16px;padding:10px;bo
  <p class="muted">Como pegar o link <b>privado</b>: abra a conversa no navegador (Chrome) com a sua conta e copie o endereço da barra, por exemplo gemini.google.com/app/&lt;id&gt;, chatgpt.com/c/&lt;id&gt; ou grok.com/c/&lt;id&gt;. <b>Não</b> use “Compartilhar / link público”: ele cria uma cópia pública e não continua a conversa.</p>
  <label for="pref">Prefixo do texto (opcional)</label><input type="text" id="pref" placeholder="ex.: Transcrição de áudio:">
  <div class="row"><button id="saveCfg">Salvar</button></div></details></div>
-<p class="muted" style="text-align:center">O modelo é baixado só na primeira vez (Rápido: ≈80 MB, ou ≈200 MB em celulares com GPU; Preciso: ≈250 a 600 MB) e fica guardado.</p>
+<p class="muted" style="text-align:center">O modelo é baixado só na primeira vez e fica guardado: Mais preciso ≈250 MB (≈600 MB em celulares com GPU); Rápido ≈80 MB (≈200 MB com GPU). Use Wi-Fi na 1ª vez.</p>
 </main><div id="toast"></div><div id="drop">Solte o áudio aqui</div>
 <script src="app.js"></script></body></html>

@@ -2,7 +2,7 @@ const $=id=>document.getElementById(id);
 const LS={get:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js');
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),3000)}
-const DEFM=LS.get('bt_default',LS.get('bt_model','onnx-community/whisper-base'));$('model').value=DEFM;$('defModel').value=DEFM;
+const DEFM=LS.get('bt_default',LS.get('bt_model','onnx-community/whisper-small'));$('model').value=DEFM;$('defModel').value=DEFM;
 $('defModel').onchange=()=>{LS.set('bt_default',$('defModel').value);$('model').value=$('defModel').value;toast('Modo padrão salvo')};let lastBlob=null;
 const worker=new Worker('worker.js',{type:'module'});let busy=false,curName='';
 function prog(txt,p){$('prog').classList.remove('hidden');$('st').textContent=txt;if(p!=null)$('pb').style.width=Math.min(100,p)+'%'}
