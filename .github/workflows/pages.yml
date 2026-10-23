@@ -1,0 +1,14 @@
+name: build-pages
+on: {push: {branches: [main]}, workflow_dispatch: {}}
+permissions: {contents: write}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          for f in *.png.b64; do base64 -d "$f" > "${f%.b64}"; done
+          mkdir /tmp/site && cp -r *.html *.js *.webmanifest *.png *.svg .nojekyll /tmp/site/
+          cd /tmp/site && git init -q -b gh-pages && git add -A
+          git -c user.name=bnd-bot -c user.email=bot@users.noreply.github.com commit -qm "site ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" gh-pages
