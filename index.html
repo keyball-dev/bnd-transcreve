@@ -14,6 +14,7 @@ textarea{width:100%;min-height:160px;font:inherit;font-size:16px;padding:10px;bo
 .muted{color:#667;font-size:13px}.hidden{display:none}#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1b2430;color:#fff;padding:10px 16px;border-radius:20px;font-size:14px;opacity:0;transition:.3s;pointer-events:none;max-width:90%;text-align:center}
 #toast.on{opacity:1}.hi{display:flex;justify-content:space-between;gap:8px;border-top:1px solid #eef;padding:8px 0}.hi p{margin:0;font-size:14px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;cursor:pointer}
 .hi button{padding:6px 10px;font-size:12px}h3{margin:0 0 8px;font-size:15px}details summary{font-weight:600;cursor:pointer}label{font-size:13px;display:block;margin:10px 0 4px}
+.seg{display:flex;gap:6px;margin-bottom:8px}.seg button{flex:1;padding:8px}.seg button.on{background:#1f3a5f;color:#fff}.hint{margin:8px 0 0}.hint a{color:#3a7bd5;cursor:pointer}#drop{position:fixed;inset:0;background:#1f3a5fcc;color:#fff;font-size:22px;display:none;align-items:center;justify-content:center;z-index:9}body.drag #drop{display:flex}
 .gem{background:#0b57d0;color:#fff}#ask{border:2px solid #0b57d0}
 </style></head><body>
 <header><b>Transcreve</b><small>BND</small></header>
@@ -21,24 +22,33 @@ textarea{width:100%;min-height:160px;font:inherit;font-size:16px;padding:10px;bo
 <div class="priv">🔒 Tudo acontece no seu aparelho. O áudio e o texto não saem do celular.</div>
 <div class="card">
  <button class="pri" id="pick">🎙️ Escolher áudio</button><input type="file" id="file" accept="audio/*,video/mp4,.opus,.ogg,.oga,.m4a,.mp3,.wav,.aac" class="hidden">
- <p class="muted">Ou no WhatsApp: segure o áudio › Compartilhar › <b>Transcreve</b>.</p>
+ <p class="muted">Ou no WhatsApp: segure o áudio › Compartilhar › <b>Transcreve</b>. No computador, arraste o arquivo pra cá.</p>
  <label for="model">Modelo</label><select id="model"><option value="onnx-community/whisper-base">Rápido (padrão)</option><option value="onnx-community/whisper-small">Mais preciso (mais lento)</option></select>
  <div id="prog" class="hidden"><div class="muted" id="st"></div><div class="bar"><i id="pb"></i></div></div>
 </div>
 <div class="card hidden" id="res">
  <h3 id="rt">Transcrição</h3><textarea id="txt"></textarea>
- <button class="pri gem" id="gem">✨ Mandar pro meu chat do Gemini</button>
+ <label for="ia">Mandar pra IA</label><div class="seg" id="iaSeg"><button data-ia="grok">Grok</button><button data-ia="gemini">Gemini</button><button data-ia="chatgpt">ChatGPT</button></div>
+ <button class="pri gem" id="gem">🤖 Mandar pra IA</button>
  <div class="row" id="gemOpts"><button id="gemNew">Abrir chat novo</button><button id="gemSwap">Trocar chat salvo</button></div>
  <div class="row"><button id="copy">📋 Copiar</button><button id="share">📤 Compartilhar</button></div>
+ <div class="row"><button id="dlMd">⬇️ .md</button><button id="dlTxt">⬇️ .txt</button></div>
+ <p class="muted hint" id="hint"></p>
 </div>
-<div class="card hidden" id="ask"><h3>Quer usar sempre essa conversa?</h3><p class="muted">No Gemini, toque em ⋮ ou Compartilhar › Copiar link da conversa. Cole o link aqui:</p>
- <input type="url" id="askUrl" placeholder="https://gemini.google.com/app/..."><div class="row"><button class="gem" id="askOk">Salvar</button><button id="askNo">Agora não</button></div></div>
-<div class="card"><h3>Histórico</h3><div id="hist" class="muted">Nenhuma transcrição ainda.</div><div class="row"><button id="clr">Apagar tudo</button></div></div>
+<div class="card hidden" id="ask"><h3 id="askT">Quer usar sempre essa conversa?</h3><p class="muted" id="askHelp"></p>
+ <input type="url" id="askUrl" placeholder="Cole o link aqui"><div class="row"><button class="gem" id="askOk">Salvar</button><button id="askNo">Agora não</button></div></div>
+<div class="card"><h3>Histórico</h3><div id="hist" class="muted">Nenhuma transcrição ainda.</div><div class="row"><button id="hMd">⬇️ Tudo .md</button><button id="hTxt">⬇️ Tudo .txt</button><button id="clr">Apagar tudo</button></div></div>
+<div class="card"><details id="inst"><summary>📲 Como instalar</summary>
+ <p><b>Android (Chrome):</b> ⋮ › “Instalar app” ou “Adicionar à tela inicial”. Depois, no WhatsApp: segure o áudio › Compartilhar › <b>Transcreve</b>. Se não aparecer na lista, abra o app uma vez e tente de novo.</p>
+ <p><b>Computador (Chrome ou Edge):</b> clique no ícone “Instalar” na barra de endereço (à direita). No PC, use “Escolher áudio” ou arraste e solte o arquivo de áudio nesta página.</p></details></div>
 <div class="card"><details id="cfg"><summary>⚙️ Configurações</summary>
- <label for="gUrl">Link do meu chat do Gemini</label><input type="url" id="gUrl" placeholder="https://gemini.google.com/app/...">
- <p class="muted">Abra a conversa no Gemini, toque em ⋮ (ou Compartilhar) › Copiar link, e cole aqui.</p>
+ <label for="defModel">Modo padrão</label><select id="defModel"><option value="onnx-community/whisper-base">Rápido</option><option value="onnx-community/whisper-small">Mais preciso</option></select>
+ <label for="u_grok">Link do meu chat do Grok</label><input type="url" id="u_grok" placeholder="https://grok.com/c/...">
+ <label for="u_gemini">Link do meu chat do Gemini</label><input type="url" id="u_gemini" placeholder="https://gemini.google.com/app/...">
+ <label for="u_chatgpt">Link do meu chat do ChatGPT</label><input type="url" id="u_chatgpt" placeholder="https://chatgpt.com/c/...">
+ <p class="muted">Como pegar o link <b>privado</b>: abra a conversa no navegador (Chrome) com a sua conta e copie o endereço da barra, por exemplo gemini.google.com/app/&lt;id&gt;, chatgpt.com/c/&lt;id&gt; ou grok.com/c/&lt;id&gt;. <b>Não</b> use “Compartilhar / link público”: ele cria uma cópia pública e não continua a conversa.</p>
  <label for="pref">Prefixo do texto (opcional)</label><input type="text" id="pref" placeholder="ex.: Transcrição de áudio:">
  <div class="row"><button id="saveCfg">Salvar</button></div></details></div>
 <p class="muted" style="text-align:center">O modelo é baixado só na primeira vez (Rápido: ≈80 MB, ou ≈200 MB em celulares com GPU; Preciso: ≈250 a 600 MB) e fica guardado.</p>
-</main><div id="toast"></div>
+</main><div id="toast"></div><div id="drop">Solte o áudio aqui</div>
 <script src="app.js"></script></body></html>
